@@ -2,6 +2,7 @@
 # These are not used in this workstation setup and are disabled during install.sh.
 
 ModemManager.service
+NetworkManager-wait-online.service
 avahi-daemon.service
 avahi-daemon.socket
 cups.service
