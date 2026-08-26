@@ -103,6 +103,50 @@ setup_flatpak() {
     flatpak remote-modify --system --no-filter flathub || true
 }
 
+ensure_flathub() {
+    log "Configuring Flathub"
+    sudo flatpak remote-add --system --if-not-exists flathub \
+        https://flathub.org/repo/flathub.flatpakrepo
+}
+
+install_flatpak_manifest() {
+    local file="$1"
+    local app
+    local -a successes=()
+    local -a failures=()
+
+    while IFS= read -r app; do
+        [[ -n "$app" ]] || continue
+
+        log "Installing Flatpak: $app"
+        if sudo flatpak install --system -y --noninteractive flathub "$app"; then
+            successes+=("$app")
+        else
+            printf 'WARNING: Failed to install Flatpak: %s\n' "$app" >&2
+            failures+=("$app")
+        fi
+    done < <(read_manifest "$file")
+
+    printf '\nFlatpaks installed successfully: %d\n' "${#successes[@]}"
+
+    if ((${#failures[@]})); then
+        printf 'Flatpak installation completed with %d failure(s):\n' \
+            "${#failures[@]}" >&2
+        printf '  - %s\n' "${failures[@]}" >&2
+        return 1
+    fi
+}
+
+install_flatpaks() {
+    local status=0
+
+    ensure_flathub
+    install_flatpak_manifest "$ROOT_DIR/packages/flatpak/themes.txt" || status=1
+    install_flatpak_manifest "$ROOT_DIR/packages/flatpak/gnome-apps.txt" || status=1
+    install_flatpak_manifest "$ROOT_DIR/packages/flatpak/user-apps.txt" || status=1
+    return "$status"
+}
+
 main() {
     echo "Starting installation..."
     setup_repositories
@@ -111,6 +155,7 @@ main() {
     install_extensions
     install_development
     remove_unwanted_packages
+    install_flatpaks
     configure_theme
     optimize_services
 

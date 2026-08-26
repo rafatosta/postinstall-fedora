@@ -1,5 +1,6 @@
 # RPM packages intentionally removed after the system installation.
 malcontent-control
+gnome-contacts
 gnome-tour
 gnome-boxes
 gnome-maps
