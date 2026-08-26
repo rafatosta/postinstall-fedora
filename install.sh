@@ -3,18 +3,14 @@ set -euo pipefail
 
 ROOT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
-
-
 log() {
     printf '\n==> %s\n' "$*"
 }
 
-
 setup_repositories() {
-    log "Configuring system repositories"
-
     log "Configuring third-party repositories"
     bash "$ROOT_DIR/repositories/third-party/vscode.sh"
+    bash "$ROOT_DIR/repositories/third-party/chatgpt.sh"
 
     log "Refreshing DNF metadata"
     sudo dnf -y makecache
@@ -24,7 +20,6 @@ read_manifest() {
     local file="$1"
     sed -e 's/[[:space:]]*#.*$//' -e '/^[[:space:]]*$/d' "$file"
 }
-
 
 install_rpm_manifest() {
     local file="$1"
@@ -89,18 +84,18 @@ setup_flatpak() {
 
     if flatpak remotes --system --columns=name | grep -Fxq fedora; then
         echo "Removendo remoto Flatpak do Fedora..."
-        flatpak remote-delete --system --force fedora
+        sudo flatpak remote-delete --system --force fedora
     fi
 
     if ! flatpak remotes --system --columns=name | grep -Fxq flathub; then
         echo "Adicionando Flathub oficial..."
-        flatpak remote-add --system --if-not-exists flathub \
+        sudo flatpak remote-add --system --if-not-exists flathub \
             https://flathub.org/repo/flathub.flatpakrepo
     fi
 
     # Remove eventual filtro aplicado pelo Fedora ao remoto Flathub,
     # preservando os aplicativos já instalados.
-    flatpak remote-modify --system --no-filter flathub || true
+    sudo flatpak remote-modify --system --no-filter flathub || true
 }
 
 ensure_flathub() {
@@ -147,18 +142,48 @@ install_flatpaks() {
     return "$status"
 }
 
+usage() {
+    cat <<'EOF'
+Usage: bash install.sh [--optimize-services]
+
+Without options, runs the normal Fedora Workstation post-install flow.
+--optimize-services additionally disables the optional services listed in
+services/disable.txt.
+EOF
+}
+
 main() {
+    local optimize=false
+
+    case "${1:-}" in
+        "") ;;
+        --optimize-services)
+            optimize=true
+            ;;
+        -h|--help|help)
+            usage
+            return 0
+            ;;
+        *)
+            usage >&2
+            return 2
+            ;;
+    esac
+
     echo "Starting installation..."
     setup_repositories
     setup_flatpak
     install_system
     install_extensions
     install_development
+    install_user_apps
     remove_unwanted_packages
     install_flatpaks
     configure_theme
-    optimize_services
 
+    if [[ "$optimize" == true ]]; then
+        optimize_services
+    fi
 
     echo "Installation complete."
 }
