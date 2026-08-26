@@ -1,0 +1,32 @@
+/* TOP BAR */
+#panel {
+  /*background-color: rgba(0, 0, 0,0.5);*/
+  /* transition from solid to transparent */
+  transition-duration: 250ms;
+  font-weight: bold;
+  height: 2em;
+  font-size: 14px;
+  /*background-color: #262626;*/
+}
+/* Deixa a barra transparente nas outras telas (overview, login) */
+/*
+#panel.unlock-screen, #panel.login-screen, #panel.lock-screen, #panel:overview {
+  background: none;
+  color: #f2f4f7;
+}*/
+
+/* https://gitlab.com/p91paul/status-area-horizontal-spacing-gnome-shell-extension */
+.panel-button {
+    -natural-hpadding: 6px;
+    -minimum-hpadding: 6px;
+}
+/*
+#panel #panelActivities.panel-button > * {
+    color: rgba(0, 0, 0, 0);
+    width: 24px;
+    height: 16px;
+    background-image: url("logo.svg");
+    background-position: center top;
+    background-repeat: no-repeat;
+    background-size: 14px auto;
+}*/
