@@ -20,6 +20,34 @@ setup_repositories() {
     sudo dnf -y makecache
 }
 
+read_manifest() {
+    local file="$1"
+    sed -e 's/[[:space:]]*#.*$//' -e '/^[[:space:]]*$/d' "$file"
+}
+
+
+install_rpm_manifest() {
+    local file="$1"
+    local -a packages=()
+
+    mapfile -t packages < <(read_manifest "$file")
+    ((${#packages[@]})) || return 0
+
+    log "Installing RPM packages from ${file#"$ROOT_DIR/"}"
+    sudo dnf install -y "${packages[@]}"
+}
+
+remove_rpm_manifest() {
+    local file="$1"
+    local -a packages=()
+
+    mapfile -t packages < <(read_manifest "$file")
+    ((${#packages[@]})) || return 0
+
+    log "Removing RPM packages from ${file#"$ROOT_DIR/"}"
+    sudo dnf remove -y --no-autoremove "${packages[@]}"
+}
+
 install_system() {
     install_rpm_manifest "$ROOT_DIR/packages/rpm/system.txt"
 }
