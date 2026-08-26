@@ -75,7 +75,7 @@ optimize_services() {
     mapfile -t services < <(read_manifest "$file")
     ((${#services[@]})) || return 0
 
-    log "Disabling optional unused services"
+    log "Disabling unused services"
     sudo systemctl disable --now "${services[@]}"
 }
 
@@ -142,34 +142,7 @@ install_flatpaks() {
     return "$status"
 }
 
-usage() {
-    cat <<'EOF'
-Usage: bash install.sh [--optimize-services]
-
-Without options, runs the normal Fedora Workstation post-install flow.
---optimize-services additionally disables the optional services listed in
-services/disable.txt.
-EOF
-}
-
 main() {
-    local optimize=false
-
-    case "${1:-}" in
-        "") ;;
-        --optimize-services)
-            optimize=true
-            ;;
-        -h|--help|help)
-            usage
-            return 0
-            ;;
-        *)
-            usage >&2
-            return 2
-            ;;
-    esac
-
     echo "Starting installation..."
     setup_repositories
     setup_flatpak
@@ -180,10 +153,7 @@ main() {
     remove_unwanted_packages
     install_flatpaks
     configure_theme
-
-    if [[ "$optimize" == true ]]; then
-        optimize_services
-    fi
+    optimize_services
 
     echo "Installation complete."
 }
