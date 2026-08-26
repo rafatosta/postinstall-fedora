@@ -1,0 +1,2 @@
+# GNOME Shell extensions packaged by Fedora.
+gnome-shell-extension-appindicator

@@ -1,0 +1,18 @@
+# RPM packages intentionally removed after the system installation.
+malcontent-control
+gnome-tour
+gnome-boxes
+gnome-maps
+gnome-weather
+showtime
+decibels
+firefox
+abrt
+simple-scan
+mediawriter
+malcontent-control
+gnome-connections
+qemu-guest-agent
+virtualbox-guest-additions
+podman
+podman-sequoia

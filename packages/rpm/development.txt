@@ -1,0 +1,5 @@
+# Development tools available from Fedora repositories.
+python3
+python3-pip
+nodejs
+android-tools

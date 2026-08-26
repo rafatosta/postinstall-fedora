@@ -1,0 +1,3 @@
+# User applications installed from their configured RPM repositories.
+google-chrome-stable
+code

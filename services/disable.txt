@@ -1,0 +1,9 @@
+# Optional service optimization profile.
+# These services are disabled only when --optimize-services is explicitly used.
+
+ModemManager.service
+avahi-daemon.service
+avahi-daemon.socket
+cups.service
+cups.socket
+cups.path

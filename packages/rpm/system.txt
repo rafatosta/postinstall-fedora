@@ -1,0 +1,3 @@
+# Fedora GNOME system base explicitly managed by fedora-bootstrap.
+# DNF resolves dependencies; user applications are intentionally excluded.
+adw-gtk3-theme

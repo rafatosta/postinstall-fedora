@@ -1,0 +1,20 @@
+# User applications installed system-wide from Flathub.
+app.drey.Dialect
+com.belmoussaoui.Obfuscate
+com.boxy_svg.BoxySVG
+com.github.tchx84.Flatseal
+com.jetbrains.IntelliJ-IDEA-Community
+com.mattjakeman.ExtensionManager
+com.rtosta.zapzap
+com.spotify.Client
+io.github.giantpinkrobots.varia
+org.desktop_plus.desktop-plus
+net.nokyan.Resources
+org.gaphor.Gaphor
+org.onlyoffice.desktopeditors
+org.videolan.VLC
+org.virt_manager.virt-manager
+page.tesk.Refine
+org.flatpak.Builder
+org.libreoffice.LibreOffice
+org.gnome.gitlab.somas.Apostrophe
