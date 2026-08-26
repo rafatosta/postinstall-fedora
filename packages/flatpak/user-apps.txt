@@ -16,5 +16,4 @@ org.videolan.VLC
 org.virt_manager.virt-manager
 page.tesk.Refine
 org.flatpak.Builder
-org.libreoffice.LibreOffice
 org.gnome.gitlab.somas.Apostrophe
