@@ -66,10 +66,25 @@ A ação `cleanup` prepara a instalação padrão do Fedora antes da instalaçã
 Ela executa as seguintes etapas:
 
 1. Remove os pacotes definidos explicitamente em `packages/rpm/remove.txt`. O DNF também pode remover dependências que deixarem de ser necessárias.
-2. Desabilita o repositório COPR do PyCharm, quando presente.
-3. Desabilita o repositório `rpmfusion-nonfree-steam`, quando presente.
-4. Desabilita o remoto Flatpak `fedora`, sem removê-lo do sistema.
-5. Executa `sudo dnf autoremove -y` para uma limpeza final das dependências órfãs.
+2. Remove dados residuais do usuário definidos explicitamente em `packages/cleanup/home.txt`.
+3. Desabilita o repositório COPR do PyCharm, quando presente.
+4. Desabilita o repositório `rpmfusion-nonfree-steam`, quando presente.
+5. Desabilita o remoto Flatpak `fedora`, sem removê-lo do sistema.
+6. Executa `sudo dnf autoremove -y` para uma limpeza final das dependências órfãs.
+
+### Limpeza da Home
+
+O arquivo `packages/cleanup/home.txt` contém somente caminhos conhecidos de aplicativos removidos. A lista inicial inclui resíduos do Firefox/Mozilla e do ABRT.
+
+O script possui proteções para essa etapa:
+
+- aceita apenas caminhos dentro da Home do usuário atual;
+- rejeita caminhos com `..`;
+- nunca permite remover diretamente `$HOME`, `~/.config`, `~/.cache`, `~/.local`, `~/.local/share` ou `~/.local/state`;
+- remove somente os caminhos exatos definidos no manifesto;
+- registra cada caminho efetivamente removido.
+
+Isso evita varreduras genéricas ou remoções indiscriminadas dentro da Home. Para adicionar outro aplicativo à limpeza, deve-se acrescentar somente os diretórios específicos e conhecidos desse aplicativo ao manifesto.
 
 Os repositórios RPM são desabilitados com `dnf config-manager`, que cria uma configuração de override. Os arquivos `.repo` fornecidos pelos pacotes do Fedora não são apagados ou modificados diretamente.
 
