@@ -18,7 +18,7 @@ Script pessoal de pós-instalação do Fedora, organizado em ações independent
 | `extensions` | Instala pacotes relacionados a extensões |
 | `dev` | Instala ferramentas de desenvolvimento |
 | `apps` | Instala aplicativos do usuário |
-| `cleanup` | Remove aplicativos e pacotes padrão que não fazem parte do ambiente desejado |
+| `cleanup` | Remove aplicativos/pacotes não desejados e executa `dnf autoremove` |
 | `flatpaks` | Instala os aplicativos Flatpak definidos nos manifests |
 | `theme` | Configura o tema GTK para aplicações legadas |
 | `all` | Executa todas as ações na sequência padrão |
@@ -54,7 +54,12 @@ Quando executado sem parâmetros, o script apenas exibe a ajuda e não realiza a
 
 ## Cleanup
 
-A ação `cleanup` remove somente os pacotes definidos explicitamente em `packages/rpm/remove.txt`. Ela serve para adequar a instalação padrão do Fedora ao ambiente desejado, removendo aplicações, serviços ou componentes opcionais que não serão utilizados.
+A ação `cleanup` executa duas etapas:
+
+1. Remove os pacotes definidos explicitamente em `packages/rpm/remove.txt`.
+2. Executa `sudo dnf autoremove -y` para remover dependências órfãs que não são mais necessárias.
+
+A remoção explícita usa `--no-autoremove`, deixando a limpeza de dependências para a etapa final do `cleanup`.
 
 ## Sequência executada por `all`
 
