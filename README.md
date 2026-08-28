@@ -22,6 +22,7 @@ Script pessoal de pós-instalação do Fedora, organizado em ações independent
 | `nvidia` | Força a reconstrução dos módulos NVIDIA com `akmods` |
 | `flatpaks` | Instala os aplicativos Flatpak definidos nos manifests |
 | `theme` | Configura o tema GTK para aplicações legadas |
+| `icons` | Instala e ativa o tema de ícones LinuxMidnight no GNOME |
 | `all` | Executa todas as ações na sequência padrão |
 | `help` | Exibe a ajuda do script |
 
@@ -37,6 +38,12 @@ Reconstruir os módulos NVIDIA após instalar ou atualizar o driver:
 
 ```bash
 ./install.sh nvidia
+```
+
+Instalar e ativar o tema de ícones LinuxMidnight:
+
+```bash
+./install.sh icons
 ```
 
 Executar várias ações em sequência:
@@ -102,6 +109,24 @@ Antes de executar, o script verifica se `akmod-nvidia` está instalado. Se o dri
 
 Essa ação é útil após instalar o driver NVIDIA ou depois de uma atualização de kernel/driver em que o módulo ainda não tenha sido construído corretamente.
 
+## Ícones
+
+A ação `icons` clona temporariamente o repositório `rafatosta/LinuxMidnight-icon-theme`, executa o instalador do próprio tema e remove o clone temporário ao terminar.
+
+O tema é instalado em:
+
+```text
+~/.local/share/icons/LinuxMidnight
+```
+
+Depois da instalação, quando o schema do GNOME está disponível, o script ativa automaticamente o tema com:
+
+```bash
+gsettings set org.gnome.desktop.interface icon-theme 'LinuxMidnight'
+```
+
+O repositório do LinuxMidnight também possui um instalador enxuto: ele copia apenas `index.theme` e os diretórios de ícones utilizados pelo tema (`scalable` e `symbolic`), evitando levar arquivos de desenvolvimento, documentação, screenshots ou metadados do Git para `~/.local/share/icons`.
+
 ## Flatpak
 
 A ação `flatpak` mantém o remoto Fedora desabilitado e configura o Flathub oficial como fonte dos aplicativos Flatpak. Caso o Flathub já exista com um filtro aplicado pela configuração do Fedora, o filtro é removido.
@@ -121,4 +146,5 @@ apps
 nvidia
 flatpaks
 theme
+icons
 ```
