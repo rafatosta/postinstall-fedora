@@ -43,6 +43,22 @@ remove_rpm_manifest() {
     sudo dnf remove -y "${packages[@]}"
 }
 
+disable_dnf_repo() {
+    local repo="$1"
+
+    if dnf repolist --all | awk 'NR > 1 {print $1}' | grep -Fxq "$repo"; then
+        log "Disabling DNF repository: $repo"
+        sudo dnf config-manager setopt "$repo.enabled=0"
+    fi
+}
+
+disable_fedora_flatpak_remote() {
+    if flatpak remotes --system --columns=name | grep -Fxq fedora; then
+        log "Disabling Fedora Flatpak remote"
+        sudo flatpak remote-modify --system --disable fedora
+    fi
+}
+
 install_system() {
     install_rpm_manifest "$ROOT_DIR/packages/rpm/system.txt"
 }
@@ -62,6 +78,10 @@ install_user_apps() {
 cleanup_system() {
     remove_rpm_manifest "$ROOT_DIR/packages/rpm/remove.txt"
 
+    disable_dnf_repo "_copr:copr.fedorainfracloud.org:phracek:PyCharm"
+    disable_dnf_repo "rpmfusion-nonfree-steam"
+    disable_fedora_flatpak_remote
+
     log "Removing orphaned packages"
     sudo dnf autoremove -y
 }
@@ -72,15 +92,12 @@ configure_theme() {
 }
 
 setup_flatpak() {
-    log "Configurando Flatpak"
+    log "Configuring Flatpak"
 
-    if flatpak remotes --system --columns=name | grep -Fxq fedora; then
-        echo "Removendo remoto Flatpak do Fedora..."
-        sudo flatpak remote-delete --system --force fedora
-    fi
+    disable_fedora_flatpak_remote
 
     if ! flatpak remotes --system --columns=name | grep -Fxq flathub; then
-        echo "Adicionando Flathub oficial..."
+        log "Adding official Flathub remote"
         sudo flatpak remote-add --system --if-not-exists flathub \
             https://flathub.org/repo/flathub.flatpakrepo
     fi
@@ -139,13 +156,13 @@ Usage:
 
 Actions:
   all          Run everything
+  cleanup      Clean the default Fedora installation
   repos        Configure repositories
   flatpak      Configure Flatpak/Flathub
   system       Install system packages
   extensions   Install extension packages
   dev          Install development packages
   apps         Install user applications
-  cleanup      Remove unwanted and orphaned packages
   flatpaks     Install Flatpak applications
   theme        Configure GTK theme
   help         Show this help
@@ -158,13 +175,13 @@ EOF
 }
 
 run_all() {
+    cleanup_system
     setup_repositories
     setup_flatpak
     install_system
     install_extensions
     install_development
     install_user_apps
-    cleanup_system
     install_flatpaks
     configure_theme
 }
@@ -172,13 +189,13 @@ run_all() {
 run_action() {
     case "$1" in
         all) run_all ;;
+        cleanup) cleanup_system ;;
         repos) setup_repositories ;;
         flatpak) setup_flatpak ;;
         system) install_system ;;
         extensions) install_extensions ;;
         dev) install_development ;;
         apps) install_user_apps ;;
-        cleanup) cleanup_system ;;
         flatpaks) install_flatpaks ;;
         theme) configure_theme ;;
         help|-h|--help) show_help ;;
