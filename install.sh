@@ -145,6 +145,34 @@ configure_theme() {
     bash "$ROOT_DIR/configuration/theme.sh"
 }
 
+install_icon_theme() (
+    set -e
+
+    local repo="https://github.com/rafatosta/LinuxMidnight-icon-theme.git"
+    local theme="LinuxMidnight"
+    local tmp_dir
+
+    if ! command -v git >/dev/null 2>&1; then
+        printf 'ERROR: git is required to install the LinuxMidnight icon theme.\n' >&2
+        return 1
+    fi
+
+    tmp_dir="$(mktemp -d)"
+    trap 'rm -rf -- "$tmp_dir"' EXIT
+
+    log "Installing LinuxMidnight icon theme"
+    git clone --depth=1 "$repo" "$tmp_dir/LinuxMidnight-icon-theme"
+    bash "$tmp_dir/LinuxMidnight-icon-theme/install.sh"
+
+    if command -v gsettings >/dev/null 2>&1 \
+        && gsettings list-schemas | grep -Fxq org.gnome.desktop.interface; then
+        log "Activating LinuxMidnight icon theme in GNOME"
+        gsettings set org.gnome.desktop.interface icon-theme "$theme"
+    else
+        log "GNOME settings unavailable; icon theme installed but not activated"
+    fi
+)
+
 setup_flatpak() {
     log "Configuring Flatpak"
 
@@ -220,11 +248,13 @@ Actions:
   nvidia       Rebuild NVIDIA kernel modules with akmods
   flatpaks     Install Flatpak applications
   theme        Configure GTK theme
+  icons        Install and activate LinuxMidnight icons
   help         Show this help
 
 Examples:
   ./install.sh cleanup
   ./install.sh nvidia
+  ./install.sh icons
   ./install.sh system dev apps
   ./install.sh all
 EOF
@@ -241,6 +271,7 @@ run_all() {
     rebuild_nvidia_modules
     install_flatpaks
     configure_theme
+    install_icon_theme
 }
 
 run_action() {
@@ -256,6 +287,7 @@ run_action() {
         nvidia) rebuild_nvidia_modules ;;
         flatpaks) install_flatpaks ;;
         theme) configure_theme ;;
+        icons) install_icon_theme ;;
         help|-h|--help) show_help ;;
         *)
             printf 'ERROR: Unknown action: %s\n\n' "$1" >&2
