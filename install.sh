@@ -173,6 +173,24 @@ install_icon_theme() (
     fi
 )
 
+configure_gnome_settings() {
+    if ! command -v gsettings >/dev/null 2>&1; then
+        printf 'ERROR: gsettings is required to configure GNOME preferences.\n' >&2
+        return 1
+    fi
+
+    log "Enabling middle-click primary paste"
+    gsettings set org.gnome.desktop.interface gtk-enable-primary-paste true
+
+    log "Disabling automatic suspend on AC power"
+    gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
+    gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 0
+
+    log "Setting automatic suspend on battery to 30 minutes"
+    gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-battery-type 'suspend'
+    gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-battery-timeout 1800
+}
+
 setup_flatpak() {
     log "Configuring Flatpak"
 
@@ -249,12 +267,14 @@ Actions:
   flatpaks     Install Flatpak applications
   theme        Configure GTK theme
   icons        Install and activate LinuxMidnight icons
+  settings     Configure GNOME user preferences
   help         Show this help
 
 Examples:
   ./install.sh cleanup
   ./install.sh nvidia
   ./install.sh icons
+  ./install.sh settings
   ./install.sh system dev apps
   ./install.sh all
 EOF
@@ -272,6 +292,7 @@ run_all() {
     install_flatpaks
     configure_theme
     install_icon_theme
+    configure_gnome_settings
 }
 
 run_action() {
@@ -288,6 +309,7 @@ run_action() {
         flatpaks) install_flatpaks ;;
         theme) configure_theme ;;
         icons) install_icon_theme ;;
+        settings) configure_gnome_settings ;;
         help|-h|--help) show_help ;;
         *)
             printf 'ERROR: Unknown action: %s\n\n' "$1" >&2
