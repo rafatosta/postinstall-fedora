@@ -23,6 +23,7 @@ Script pessoal de pós-instalação do Fedora, organizado em ações independent
 | `flatpaks` | Instala os aplicativos Flatpak definidos nos manifests |
 | `theme` | Configura o tema GTK para aplicações legadas |
 | `icons` | Instala e ativa o tema de ícones LinuxMidnight no GNOME |
+| `settings` | Aplica preferências pessoais do GNOME |
 | `all` | Executa todas as ações na sequência padrão |
 | `help` | Exibe a ajuda do script |
 
@@ -44,6 +45,12 @@ Instalar e ativar o tema de ícones LinuxMidnight:
 
 ```bash
 ./install.sh icons
+```
+
+Aplicar as preferências pessoais do GNOME:
+
+```bash
+./install.sh settings
 ```
 
 Executar várias ações em sequência:
@@ -127,6 +134,30 @@ gsettings set org.gnome.desktop.interface icon-theme 'LinuxMidnight'
 
 O repositório do LinuxMidnight também possui um instalador enxuto: ele copia apenas `index.theme` e os diretórios de ícones utilizados pelo tema (`scalable` e `symbolic`), evitando levar arquivos de desenvolvimento, documentação, screenshots ou metadados do Git para `~/.local/share/icons`.
 
+## Settings
+
+A ação `settings` aplica preferências pessoais do usuário no GNOME usando `gsettings`.
+
+Atualmente ela configura:
+
+- colagem da seleção primária com o botão do meio do mouse;
+- suspensão automática desativada quando o computador está ligado à tomada;
+- suspensão automática após 30 minutos quando estiver usando a bateria.
+
+As configurações aplicadas são equivalentes a:
+
+```bash
+gsettings set org.gnome.desktop.interface gtk-enable-primary-paste true
+
+gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
+gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 0
+
+gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-battery-type 'suspend'
+gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-battery-timeout 1800
+```
+
+Essas preferências são gravadas para o usuário atual e não modificam arquivos globais do sistema.
+
 ## Flatpak
 
 A ação `flatpak` mantém o remoto Fedora desabilitado e configura o Flathub oficial como fonte dos aplicativos Flatpak. Caso o Flathub já exista com um filtro aplicado pela configuração do Fedora, o filtro é removido.
@@ -147,4 +178,5 @@ nvidia
 flatpaks
 theme
 icons
+settings
 ```
