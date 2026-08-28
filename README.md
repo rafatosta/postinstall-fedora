@@ -18,7 +18,7 @@ Script pessoal de pós-instalação do Fedora, organizado em ações independent
 | `extensions` | Instala pacotes relacionados a extensões |
 | `dev` | Instala ferramentas de desenvolvimento |
 | `apps` | Instala aplicativos do usuário |
-| `remove` | Remove aplicativos/pacotes indesejados |
+| `cleanup` | Remove aplicativos e pacotes padrão que não fazem parte do ambiente desejado |
 | `flatpaks` | Instala os aplicativos Flatpak definidos nos manifests |
 | `theme` | Configura o tema GTK para aplicações legadas |
 | `all` | Executa todas as ações na sequência padrão |
@@ -26,10 +26,10 @@ Script pessoal de pós-instalação do Fedora, organizado em ações independent
 
 ## Exemplos
 
-Executar apenas uma ação:
+Executar apenas a limpeza do sistema:
 
 ```bash
-./install.sh remove
+./install.sh cleanup
 ```
 
 Executar várias ações em sequência:
@@ -52,6 +52,10 @@ Exibir a ajuda:
 
 Quando executado sem parâmetros, o script apenas exibe a ajuda e não realiza alterações no sistema.
 
+## Cleanup
+
+A ação `cleanup` remove somente os pacotes definidos explicitamente em `packages/rpm/remove.txt`. Ela serve para adequar a instalação padrão do Fedora ao ambiente desejado, removendo aplicações, serviços ou componentes opcionais que não serão utilizados.
+
 ## Sequência executada por `all`
 
 ```text
@@ -61,7 +65,7 @@ system
 extensions
 dev
 apps
-remove
+cleanup
 flatpaks
 theme
 ```
