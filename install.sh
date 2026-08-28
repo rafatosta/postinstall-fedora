@@ -43,6 +43,44 @@ remove_rpm_manifest() {
     sudo dnf remove -y "${packages[@]}"
 }
 
+cleanup_home_manifest() {
+    local file="$1"
+    local entry path
+
+    while IFS= read -r entry; do
+        case "$entry" in
+            '~/'*) path="$HOME/${entry#\~/}" ;;
+            "$HOME/"*) path="$entry" ;;
+            *)
+                printf 'WARNING: Ignoring cleanup path outside HOME: %s\n' "$entry" >&2
+                continue
+                ;;
+        esac
+
+        if [[ "$path" == *'/../'* || "$path" == */.. ]]; then
+            printf 'WARNING: Ignoring unsafe cleanup path: %s\n' "$entry" >&2
+            continue
+        fi
+
+        case "$path" in
+            "$HOME"|"$HOME/.config"|"$HOME/.cache"|"$HOME/.local"|"$HOME/.local/share"|"$HOME/.local/state")
+                printf 'WARNING: Refusing to remove protected directory: %s\n' "$path" >&2
+                continue
+                ;;
+        esac
+
+        [[ "$path" == "$HOME/"* ]] || {
+            printf 'WARNING: Ignoring cleanup path outside HOME: %s\n' "$entry" >&2
+            continue
+        }
+
+        if [[ -e "$path" || -L "$path" ]]; then
+            log "Removing user data: ${path#"$HOME/"}"
+            rm -rf -- "$path"
+        fi
+    done < <(read_manifest "$file")
+}
+
 disable_dnf_repo() {
     local repo="$1"
 
@@ -77,6 +115,7 @@ install_user_apps() {
 
 cleanup_system() {
     remove_rpm_manifest "$ROOT_DIR/packages/rpm/remove.txt"
+    cleanup_home_manifest "$ROOT_DIR/packages/cleanup/home.txt"
 
     disable_dnf_repo "_copr:copr.fedorainfracloud.org:phracek:PyCharm"
     disable_dnf_repo "rpmfusion-nonfree-steam"
