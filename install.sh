@@ -142,13 +142,13 @@ Actions:
   extensions   Install extension packages
   dev          Install development packages
   apps         Install user applications
-  remove       Remove unwanted applications
+  cleanup      Remove unwanted applications/packages
   flatpaks     Install Flatpak applications
   theme        Configure GTK theme
   help         Show this help
 
 Examples:
-  ./install.sh remove
+  ./install.sh cleanup
   ./install.sh system dev apps
   ./install.sh all
 EOF
@@ -175,7 +175,7 @@ run_action() {
         extensions) install_extensions ;;
         dev) install_development ;;
         apps) install_user_apps ;;
-        remove) remove_unwanted_packages ;;
+        cleanup) remove_unwanted_packages ;;
         flatpaks) install_flatpaks ;;
         theme) configure_theme ;;
         help|-h|--help) show_help ;;
