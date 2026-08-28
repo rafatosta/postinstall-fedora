@@ -1,0 +1,12 @@
+# User data/cache paths intentionally removed by cleanup.
+# Only paths inside the current user's HOME are allowed.
+
+# Firefox / Mozilla
+~/.mozilla
+~/.cache/mozilla
+~/.config/mozilla
+
+# ABRT
+~/.cache/abrt
+~/.config/abrt
+~/.local/share/abrt
