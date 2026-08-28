@@ -86,6 +86,21 @@ cleanup_system() {
     sudo dnf autoremove -y
 }
 
+rebuild_nvidia_modules() {
+    if ! rpm -q akmod-nvidia >/dev/null 2>&1; then
+        log "NVIDIA akmod is not installed; skipping module rebuild"
+        return 0
+    fi
+
+    if ! command -v akmods >/dev/null 2>&1; then
+        printf 'ERROR: akmod-nvidia is installed, but the akmods command is unavailable.\n' >&2
+        return 1
+    fi
+
+    log "Rebuilding NVIDIA kernel modules"
+    sudo akmods --rebuild --force
+}
+
 configure_theme() {
     log "Configuring the adw-gtk3 theme for legacy applications"
     bash "$ROOT_DIR/configuration/theme.sh"
@@ -163,12 +178,14 @@ Actions:
   extensions   Install extension packages
   dev          Install development packages
   apps         Install user applications
+  nvidia       Rebuild NVIDIA kernel modules with akmods
   flatpaks     Install Flatpak applications
   theme        Configure GTK theme
   help         Show this help
 
 Examples:
   ./install.sh cleanup
+  ./install.sh nvidia
   ./install.sh system dev apps
   ./install.sh all
 EOF
@@ -182,6 +199,7 @@ run_all() {
     install_extensions
     install_development
     install_user_apps
+    rebuild_nvidia_modules
     install_flatpaks
     configure_theme
 }
@@ -196,6 +214,7 @@ run_action() {
         extensions) install_extensions ;;
         dev) install_development ;;
         apps) install_user_apps ;;
+        nvidia) rebuild_nvidia_modules ;;
         flatpaks) install_flatpaks ;;
         theme) configure_theme ;;
         help|-h|--help) show_help ;;
