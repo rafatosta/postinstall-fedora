@@ -131,8 +131,32 @@ install_flatpaks() {
     return "$status"
 }
 
-main() {
-    echo "Starting installation..."
+show_help() {
+    cat <<'EOF'
+Usage:
+  ./install.sh <action> [action...]
+
+Actions:
+  all                   Run the complete installation
+  install.repositories  Configure third-party repositories
+  install.flatpak       Configure Flatpak and Flathub
+  install.system        Install system packages
+  install.extensions    Install extension packages
+  install.development   Install development packages
+  install.userapps      Install user applications
+  install.removeapps    Remove unwanted applications
+  install.flatpaks      Install Flatpak applications
+  install.theme         Configure the GTK theme
+  help                  Show this help
+
+Examples:
+  ./install.sh install.removeapps
+  ./install.sh install.system install.development
+  ./install.sh all
+EOF
+}
+
+run_all() {
     setup_repositories
     setup_flatpak
     install_system
@@ -142,7 +166,66 @@ main() {
     remove_unwanted_packages
     install_flatpaks
     configure_theme
-    echo "Installation complete."
+}
+
+run_action() {
+    local action="$1"
+
+    case "$action" in
+        all)
+            run_all
+            ;;
+        install.repositories)
+            setup_repositories
+            ;;
+        install.flatpak)
+            setup_flatpak
+            ;;
+        install.system)
+            install_system
+            ;;
+        install.extensions)
+            install_extensions
+            ;;
+        install.development)
+            install_development
+            ;;
+        install.userapps)
+            install_user_apps
+            ;;
+        install.removeapps)
+            remove_unwanted_packages
+            ;;
+        install.flatpaks)
+            install_flatpaks
+            ;;
+        install.theme)
+            configure_theme
+            ;;
+        help|-h|--help)
+            show_help
+            ;;
+        *)
+            printf 'ERROR: Unknown action: %s\n\n' "$action" >&2
+            show_help >&2
+            return 2
+            ;;
+    esac
+}
+
+main() {
+    if (($# == 0)); then
+        show_help
+        return 0
+    fi
+
+    local action
+    for action in "$@"; do
+        log "Running action: $action"
+        run_action "$action"
+    done
+
+    echo "Installation action(s) complete."
 }
 
 main "$@"
