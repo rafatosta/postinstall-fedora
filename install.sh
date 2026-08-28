@@ -59,8 +59,11 @@ install_user_apps() {
     install_rpm_manifest "$ROOT_DIR/packages/rpm/user-apps.txt"
 }
 
-remove_unwanted_packages() {
+cleanup_system() {
     remove_rpm_manifest "$ROOT_DIR/packages/rpm/remove.txt"
+
+    log "Removing orphaned packages"
+    sudo dnf autoremove -y
 }
 
 configure_theme() {
@@ -142,7 +145,7 @@ Actions:
   extensions   Install extension packages
   dev          Install development packages
   apps         Install user applications
-  cleanup      Remove unwanted applications/packages
+  cleanup      Remove unwanted and orphaned packages
   flatpaks     Install Flatpak applications
   theme        Configure GTK theme
   help         Show this help
@@ -161,7 +164,7 @@ run_all() {
     install_extensions
     install_development
     install_user_apps
-    remove_unwanted_packages
+    cleanup_system
     install_flatpaks
     configure_theme
 }
@@ -175,7 +178,7 @@ run_action() {
         extensions) install_extensions ;;
         dev) install_development ;;
         apps) install_user_apps ;;
-        cleanup) remove_unwanted_packages ;;
+        cleanup) cleanup_system ;;
         flatpaks) install_flatpaks ;;
         theme) configure_theme ;;
         help|-h|--help) show_help ;;
