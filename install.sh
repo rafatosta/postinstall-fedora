@@ -40,7 +40,7 @@ remove_rpm_manifest() {
     ((${#packages[@]})) || return 0
 
     log "Removing RPM packages from ${file#"$ROOT_DIR/"}"
-    sudo dnf remove -y --no-autoremove "${packages[@]}"
+    sudo dnf remove -y "${packages[@]}"
 }
 
 install_system() {
