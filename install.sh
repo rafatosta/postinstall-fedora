@@ -82,8 +82,6 @@ setup_flatpak() {
             https://flathub.org/repo/flathub.flatpakrepo
     fi
 
-    # Remove eventual filtro aplicado pelo Fedora ao remoto Flathub,
-    # preservando os aplicativos já instalados.
     sudo flatpak remote-modify --system --no-filter flathub || true
 }
 
@@ -137,21 +135,21 @@ Usage:
   ./install.sh <action> [action...]
 
 Actions:
-  all                   Run the complete installation
-  install.repositories  Configure third-party repositories
-  install.flatpak       Configure Flatpak and Flathub
-  install.system        Install system packages
-  install.extensions    Install extension packages
-  install.development   Install development packages
-  install.userapps      Install user applications
-  install.removeapps    Remove unwanted applications
-  install.flatpaks      Install Flatpak applications
-  install.theme         Configure the GTK theme
-  help                  Show this help
+  all          Run everything
+  repos        Configure repositories
+  flatpak      Configure Flatpak/Flathub
+  system       Install system packages
+  extensions   Install extension packages
+  dev          Install development packages
+  apps         Install user applications
+  remove       Remove unwanted applications
+  flatpaks     Install Flatpak applications
+  theme        Configure GTK theme
+  help         Show this help
 
 Examples:
-  ./install.sh install.removeapps
-  ./install.sh install.system install.development
+  ./install.sh remove
+  ./install.sh system dev apps
   ./install.sh all
 EOF
 }
@@ -169,44 +167,20 @@ run_all() {
 }
 
 run_action() {
-    local action="$1"
-
-    case "$action" in
-        all)
-            run_all
-            ;;
-        install.repositories)
-            setup_repositories
-            ;;
-        install.flatpak)
-            setup_flatpak
-            ;;
-        install.system)
-            install_system
-            ;;
-        install.extensions)
-            install_extensions
-            ;;
-        install.development)
-            install_development
-            ;;
-        install.userapps)
-            install_user_apps
-            ;;
-        install.removeapps)
-            remove_unwanted_packages
-            ;;
-        install.flatpaks)
-            install_flatpaks
-            ;;
-        install.theme)
-            configure_theme
-            ;;
-        help|-h|--help)
-            show_help
-            ;;
+    case "$1" in
+        all) run_all ;;
+        repos) setup_repositories ;;
+        flatpak) setup_flatpak ;;
+        system) install_system ;;
+        extensions) install_extensions ;;
+        dev) install_development ;;
+        apps) install_user_apps ;;
+        remove) remove_unwanted_packages ;;
+        flatpaks) install_flatpaks ;;
+        theme) configure_theme ;;
+        help|-h|--help) show_help ;;
         *)
-            printf 'ERROR: Unknown action: %s\n\n' "$action" >&2
+            printf 'ERROR: Unknown action: %s\n\n' "$1" >&2
             show_help >&2
             return 2
             ;;
@@ -221,11 +195,8 @@ main() {
 
     local action
     for action in "$@"; do
-        log "Running action: $action"
         run_action "$action"
     done
-
-    echo "Installation action(s) complete."
 }
 
 main "$@"
