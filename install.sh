@@ -68,17 +68,6 @@ configure_theme() {
     bash "$ROOT_DIR/configuration/theme.sh"
 }
 
-optimize_services() {
-    local file="$ROOT_DIR/services/disable.txt"
-    local -a services=()
-
-    mapfile -t services < <(read_manifest "$file")
-    ((${#services[@]})) || return 0
-
-    log "Disabling unused services"
-    sudo systemctl disable --now "${services[@]}"
-}
-
 setup_flatpak() {
     log "Configurando Flatpak"
 
@@ -153,8 +142,6 @@ main() {
     remove_unwanted_packages
     install_flatpaks
     configure_theme
-    optimize_services
-
     echo "Installation complete."
 }
 

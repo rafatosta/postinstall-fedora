@@ -17,3 +17,4 @@ org.virt_manager.virt-manager
 page.tesk.Refine
 org.flatpak.Builder
 org.gnome.gitlab.somas.Apostrophe
+com.valvesoftware.Steam
