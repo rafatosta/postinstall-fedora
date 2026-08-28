@@ -12,13 +12,13 @@ Script pessoal de pós-instalação do Fedora, organizado em ações independent
 
 | Ação | Descrição |
 | --- | --- |
+| `cleanup` | Limpa a instalação padrão do Fedora antes da configuração |
 | `repos` | Configura repositórios de terceiros |
 | `flatpak` | Configura Flatpak e Flathub |
 | `system` | Instala pacotes básicos do sistema |
 | `extensions` | Instala pacotes relacionados a extensões |
 | `dev` | Instala ferramentas de desenvolvimento |
 | `apps` | Instala aplicativos do usuário |
-| `cleanup` | Remove aplicativos/pacotes não desejados e executa `dnf autoremove` |
 | `flatpaks` | Instala os aplicativos Flatpak definidos nos manifests |
 | `theme` | Configura o tema GTK para aplicações legadas |
 | `all` | Executa todas as ações na sequência padrão |
@@ -54,23 +54,36 @@ Quando executado sem parâmetros, o script apenas exibe a ajuda e não realiza a
 
 ## Cleanup
 
-A ação `cleanup` executa duas etapas:
+A ação `cleanup` prepara a instalação padrão do Fedora antes da instalação dos aplicativos e configurações desejados.
 
-1. Remove os pacotes definidos explicitamente em `packages/rpm/remove.txt`.
-2. Executa `sudo dnf autoremove -y` para remover dependências órfãs que não são mais necessárias.
+Ela executa as seguintes etapas:
 
-A remoção explícita usa `--no-autoremove`, deixando a limpeza de dependências para a etapa final do `cleanup`.
+1. Remove os pacotes definidos explicitamente em `packages/rpm/remove.txt`. O DNF também pode remover dependências que deixarem de ser necessárias.
+2. Desabilita o repositório COPR do PyCharm, quando presente.
+3. Desabilita o repositório `rpmfusion-nonfree-steam`, quando presente.
+4. Desabilita o remoto Flatpak `fedora`, sem removê-lo do sistema.
+5. Executa `sudo dnf autoremove -y` para uma limpeza final das dependências órfãs.
+
+Os repositórios RPM são desabilitados com `dnf config-manager`, que cria uma configuração de override. Os arquivos `.repo` fornecidos pelos pacotes do Fedora não são apagados ou modificados diretamente.
+
+O repositório `fedora-cisco-openh264` é mantido habilitado, pois não é exclusivo do Firefox e pode ser utilizado por outros componentes multimídia do sistema.
+
+## Flatpak
+
+A ação `flatpak` mantém o remoto Fedora desabilitado e configura o Flathub oficial como fonte dos aplicativos Flatpak. Caso o Flathub já exista com um filtro aplicado pela configuração do Fedora, o filtro é removido.
 
 ## Sequência executada por `all`
 
+O `cleanup` é executado primeiro. Depois disso, o script configura e instala o ambiente desejado:
+
 ```text
+cleanup
 repos
 flatpak
 system
 extensions
 dev
 apps
-cleanup
 flatpaks
 theme
 ```
