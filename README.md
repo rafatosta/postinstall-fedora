@@ -19,6 +19,7 @@ Script pessoal de pós-instalação do Fedora, organizado em ações independent
 | `extensions` | Instala pacotes relacionados a extensões |
 | `dev` | Instala ferramentas de desenvolvimento |
 | `apps` | Instala aplicativos do usuário |
+| `nvidia` | Força a reconstrução dos módulos NVIDIA com `akmods` |
 | `flatpaks` | Instala os aplicativos Flatpak definidos nos manifests |
 | `theme` | Configura o tema GTK para aplicações legadas |
 | `all` | Executa todas as ações na sequência padrão |
@@ -30,6 +31,12 @@ Executar apenas a limpeza do sistema:
 
 ```bash
 ./install.sh cleanup
+```
+
+Reconstruir os módulos NVIDIA após instalar ou atualizar o driver:
+
+```bash
+./install.sh nvidia
 ```
 
 Executar várias ações em sequência:
@@ -68,6 +75,18 @@ Os repositórios RPM são desabilitados com `dnf config-manager`, que cria uma c
 
 O repositório `fedora-cisco-openh264` é mantido habilitado, pois não é exclusivo do Firefox e pode ser utilizado por outros componentes multimídia do sistema.
 
+## NVIDIA
+
+A ação `nvidia` força a reconstrução dos módulos de kernel do driver NVIDIA instalado via RPM Fusion:
+
+```bash
+sudo akmods --rebuild --force
+```
+
+Antes de executar, o script verifica se `akmod-nvidia` está instalado. Se o driver não estiver presente, a ação é ignorada sem gerar erro. Isso permite manter `nvidia` na sequência `all` mesmo em uma instalação onde o driver ainda não tenha sido instalado.
+
+Essa ação é útil após instalar o driver NVIDIA ou depois de uma atualização de kernel/driver em que o módulo ainda não tenha sido construído corretamente.
+
 ## Flatpak
 
 A ação `flatpak` mantém o remoto Fedora desabilitado e configura o Flathub oficial como fonte dos aplicativos Flatpak. Caso o Flathub já exista com um filtro aplicado pela configuração do Fedora, o filtro é removido.
@@ -84,6 +103,7 @@ system
 extensions
 dev
 apps
+nvidia
 flatpaks
 theme
 ```
