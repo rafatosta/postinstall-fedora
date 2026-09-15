@@ -14,5 +14,4 @@ mediawriter
 gnome-connections
 qemu-guest-agent
 virtualbox-guest-additions
-podman
 podman-sequoia
