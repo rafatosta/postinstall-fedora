@@ -11,6 +11,7 @@ setup_repositories() {
     log "Configuring third-party repositories"
     bash "$ROOT_DIR/repositories/third-party/vscode.sh"
     bash "$ROOT_DIR/repositories/third-party/chatgpt.sh"
+    bash "$ROOT_DIR/repositories/third-party/onlyoffice.sh"
 
     log "Refreshing DNF metadata"
     sudo dnf -y makecache
