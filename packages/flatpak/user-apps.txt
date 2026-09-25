@@ -3,7 +3,6 @@ app.drey.Dialect
 com.belmoussaoui.Obfuscate
 com.boxy_svg.BoxySVG
 com.github.tchx84.Flatseal
-com.jetbrains.IntelliJ-IDEA-Community
 com.mattjakeman.ExtensionManager
 com.rtosta.zapzap
 com.spotify.Client
