@@ -2,4 +2,3 @@
 google-chrome-stable
 code
 chatgpt
-onlyoffice-desktopeditors
