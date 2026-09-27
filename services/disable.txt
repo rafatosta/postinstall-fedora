@@ -1,10 +1,10 @@
 # Services intentionally disabled by the post-install profile.
 # These are not used in this workstation setup and are disabled during install.sh.
 
-ModemManager.service
+#ModemManager.service
 NetworkManager-wait-online.service
-avahi-daemon.service
-avahi-daemon.socket
-cups.service
-cups.socket
-cups.path
+#avahi-daemon.service
+#avahi-daemon.socket
+#cups.service
+#cups.socket
+#cups.path
