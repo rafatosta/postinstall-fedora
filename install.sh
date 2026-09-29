@@ -140,11 +140,6 @@ rebuild_nvidia_modules() {
     sudo akmods --rebuild --force
 }
 
-configure_theme() {
-    log "Installing and configuring conservative Colloid GTK theme"
-    bash "$ROOT_DIR/configuration/theme.sh"
-}
-
 install_icon_theme() (
     set -e
 
@@ -265,7 +260,6 @@ Actions:
   apps         Install user applications
   nvidia       Rebuild NVIDIA kernel modules with akmods
   flatpaks     Install Flatpak applications
-  theme        Configure GTK theme
   icons        Install and activate LinuxMidnight icons
   settings     Configure GNOME user preferences
   help         Show this help
@@ -290,7 +284,6 @@ run_all() {
     install_user_apps
     rebuild_nvidia_modules
     install_flatpaks
-    configure_theme
     install_icon_theme
     configure_gnome_settings
 }
@@ -307,7 +300,6 @@ run_action() {
         apps) install_user_apps ;;
         nvidia) rebuild_nvidia_modules ;;
         flatpaks) install_flatpaks ;;
-        theme) configure_theme ;;
         icons) install_icon_theme ;;
         settings) configure_gnome_settings ;;
         help|-h|--help) show_help ;;
