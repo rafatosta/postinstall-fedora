@@ -141,7 +141,7 @@ rebuild_nvidia_modules() {
 }
 
 configure_theme() {
-    log "Configuring the adw-gtk3 theme for legacy applications"
+    log "Installing and configuring conservative Colloid GTK theme"
     bash "$ROOT_DIR/configuration/theme.sh"
 }
 
