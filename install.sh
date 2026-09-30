@@ -177,6 +177,15 @@ configure_gnome_settings() {
     log "Enabling middle-click primary paste"
     gsettings set org.gnome.desktop.interface gtk-enable-primary-paste true
 
+    log "Reducing GNOME search integrations"
+    gsettings set org.gnome.desktop.search-providers disable-external true
+
+    log "Disabling application usage history"
+    gsettings set org.gnome.desktop.privacy remember-app-usage false
+
+    log "Disabling recent files history"
+    gsettings set org.gnome.desktop.privacy remember-recent-files false
+
     log "Disabling automatic suspend on AC power"
     gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
     gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 0
