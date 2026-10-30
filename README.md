@@ -180,3 +180,42 @@ theme
 icons
 settings
 ```
+
+## Backup e restauração do Codex
+
+O Codex armazena dados locais na pasta oculta `~/.codex`, incluindo sessões, índices, bancos SQLite, configurações e possíveis anexos. Esse backup **não sincroniza conversas com a nuvem** e a restauração não garante que todas as sessões apareçam na interface de versões futuras.
+
+### Fazer backup antes de reinstalar o Fedora
+
+1. Feche completamente o aplicativo Codex, para evitar copiar bancos SQLite durante operações de escrita (inclusive arquivos `-wal` e `-shm`).
+2. Salve uma cópia compactada fora da instalação que será formatada, por exemplo em uma unidade externa. Para criar primeiro o arquivo em `Documents`:
+
+```bash
+tar -czf "$HOME/Documents/codex-backup-$(date +%Y-%m-%d).tar.gz" -C "$HOME" .codex
+```
+
+3. Verifique o conteúdo e a integridade do arquivo, antes de apagar a instalação original:
+
+```bash
+tar -tzf "$HOME/Documents/codex-backup-$(date +%Y-%m-%d).tar.gz" | head
+gzip -t "$HOME/Documents/codex-backup-$(date +%Y-%m-%d).tar.gz"
+```
+
+**Importante:** um arquivo salvo em `~/Documents` será perdido se esse diretório for formatado. Copie o backup para um dispositivo externo ou armazenamento seguro antes da reinstalação.
+
+### Restaurar o backup
+
+Com o Codex fechado, em uma instalação nova (ou depois de preservar/renomear uma pasta `~/.codex` já existente), execute:
+
+```bash
+tar -xzf "/caminho/para/codex-backup-AAAA-MM-DD.tar.gz" -C "$HOME"
+chmod 700 "$HOME/.codex"
+```
+
+Substitua o caminho e a data pelo nome real do arquivo. Abra o aplicativo e confira as sessões. A compatibilidade da restauração depende da versão do Codex e do estado dos dados locais; pode ser necessário autenticar novamente.
+
+### Segurança e diretórios diferentes
+
+- O arquivo `~/.codex/auth.json` pode conter credenciais e tokens. Trate o backup como **informação sensível**; não o publique no GitHub e criptografe-o antes de enviá-lo a um serviço de nuvem.
+- Pastas de projetos, como `~/Documents/Codex`, são independentes de `~/.codex` e **não entram** nesse backup. Se contiverem arquivos importantes, copie-as separadamente.
+- Para conferir onde estão os dados locais: `ls -lah ~/.codex`.
