@@ -1,2 +1,5 @@
 # GNOME Shell extensions packaged by Fedora.
 gnome-shell-extension-appindicator
+gnome-shell-extension-user-theme
+gnome-shell-extension-caffeine
+
