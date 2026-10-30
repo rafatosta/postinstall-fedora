@@ -253,6 +253,11 @@ install_flatpaks() {
     return "$status"
 }
 
+restore_gnome_layout() {
+    log "Restoring GNOME application layout and folders"
+    bash "$ROOT_DIR/restore.sh"
+}
+
 show_help() {
     cat <<'EOF'
 Usage:
@@ -271,6 +276,7 @@ Actions:
   flatpaks     Install Flatpak applications
   icons        Install and activate LinuxMidnight icons
   settings     Configure GNOME user preferences
+  restore      Restore GNOME application layout and folders
   help         Show this help
 
 Examples:
@@ -295,6 +301,7 @@ run_all() {
     install_flatpaks
     install_icon_theme
     configure_gnome_settings
+    restore_gnome_layout
 }
 
 run_action() {
@@ -311,6 +318,7 @@ run_action() {
         flatpaks) install_flatpaks ;;
         icons) install_icon_theme ;;
         settings) configure_gnome_settings ;;
+        restore) restore_gnome_layout ;;
         help|-h|--help) show_help ;;
         *)
             printf 'ERROR: Unknown action: %s\n\n' "$1" >&2

@@ -180,3 +180,18 @@ theme
 icons
 settings
 ```
+
+## Backup e restauração da grade do GNOME
+
+Execute `bash ./backup.sh` na sessão GNOME para atualizar os arquivos
+`backups/gnome/app-layout.txt` e `backups/gnome/app-folders.ini`.
+Revise as alterações e faça o commit e push manualmente.
+
+Execute `bash ./install.sh restore` para restaurar a organização. A ação
+`all` também restaura ao final, depois da instalação dos aplicativos.
+Se não houver backup, a restauração é ignorada. Se estiver incompleto,
+a operação falha sem modificar a configuração.
+
+Execute como usuário do GNOME, sem `sudo`. Aplicativos ausentes não são
+reinstalados pela restauração. Pode ser necessário reiniciar a sessão.
+O backup não inclui senhas, tokens ou dados de aplicativos.
