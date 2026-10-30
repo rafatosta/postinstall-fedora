@@ -2,6 +2,7 @@
 app.drey.Dialect
 com.belmoussaoui.Obfuscate
 com.boxy_svg.BoxySVG
+com.discordapp.Discord
 com.github.jeromerobert.pdfarranger
 com.github.tchx84.Flatseal
 com.mattjakeman.ExtensionManager
